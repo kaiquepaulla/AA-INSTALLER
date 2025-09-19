@@ -9,18 +9,25 @@
 #######################################
 system_create_user() {
   print_banner
-  printf "${WHITE} 💻 Agora, vamos criar o usuário para a instancia...${GRAY_LIGHT}"
-  printf "\n\n"
-
+  printf "${WHITE} 💻 Agora, vamos criar o usuário para a nova Instância...${GRAY_LIGHT}\n\n"
   sleep 2
 
-  sudo su - root <<EOF
-  useradd -m -p $(openssl passwd -6 ${mysql_root_password}) -s /bin/bash -G sudo deploy
-  usermod -aG sudo deploy
-  echo 'export NVM_DIR="\$HOME/.nvm"' >> /home/deploy/.bashrc
-  echo '[ -s "\$NVM_DIR/nvm.sh" ] && \. "\$NVM_DIR/nvm.sh"' >> /home/deploy/.bashrc
-  echo '[ -s "\$NVM_DIR/bash_completion" ] && \. "\$NVM_DIR/bash_completion"' >> /home/deploy/.bashrc
-EOF
+  # Define o nome do usuário
+  local username="deploy"
+
+  # Gera a senha criptografada de forma segura
+  local encrypted_pass
+  encrypted_pass=$(openssl passwd -6 "${mysql_root_password}")
+
+  # Criação do usuário com shell bash e diretório home
+  sudo useradd -m -s /bin/bash -G sudo -p "${encrypted_pass}" "${username}"
+
+  # Confirma que o usuário foi criado e adicionado ao grupo sudo
+  if id "${username}" &>/dev/null; then
+    echo -e "${GREEN}✅ Usuário '${username}' criado com sucesso e adicionado ao grupo sudo.${GRAY_LIGHT}\n"
+  else
+    echo -e "${RED}❌ Falha ao criar o usuário '${username}'.${GRAY_LIGHT}\n"
+  fi
 
   sleep 2
 }
@@ -38,7 +45,7 @@ system_git_clone() {
   sleep 2
 
 sudo su - deploy <<EOF
-  git clone -b velochat https://lucassaud:${token_code}@github.com/AutoAtende/Fonte.git /home/deploy/${instancia_add}
+  git clone https://github.com/AutoAtende/AutoAtende.git /home/deploy/${instancia_add}
 EOF
 
   sleep 2
