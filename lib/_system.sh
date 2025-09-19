@@ -249,18 +249,17 @@ EOF
 #######################################
 system_pm2_install() {
   print_banner
-  printf "${WHITE} 💻 Instalando o pm2...${GRAY_LIGHT}\n\n"
+  printf "${WHITE} 💻 Instalando pm2...${GRAY_LIGHT}"
+  printf "\n\n"
+
+  sleep 2
 
   sudo su - root <<EOF
-  npm install -g pm2@latest
+  npm install -g pm2
+
 EOF
 
   sleep 2
-
-  printf "${WHITE} ✔️ pm2 instalado com sucesso!${GRAY_LIGHT}\n"
-
-  sleep 2
-
 }
 
 
